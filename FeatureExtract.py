@@ -21,7 +21,7 @@ class FeatureExtraction:
         self.results = model.process(self.image)  # Make prediction
         self.image.flags.writeable = True  # Image is now writeable
         self.image = cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)  # COLOR CONVERSION RGB 2 BGR
-        return self.image, self.results
+
 
     def plot_landmarks(self):
         # Draw pose connections
@@ -62,7 +62,7 @@ class FeatureExtraction:
                 for frames in range(no_frames):
                     ret, frame = cap.read()
                     if ret is True:
-                        self.image, self.results = self.mp_detect(frame, holistic)
+                        self.mp_detect(frame, holistic)
                         self.coordinates = self.get_coordinates()
                         coord_path = os.path.join(os.getcwd(),'data_points',file_name[0])
                         np.save(coord_path,self.coordinates)
