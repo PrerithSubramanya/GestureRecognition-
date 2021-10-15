@@ -13,7 +13,8 @@ class FeatureExtraction:
         self.results = None
         self.coordinates = None
         self.sequence = []
-        self.labels = None
+        self.className = None
+        self.labels = []
 
     def mp_detect(self, image, model):
         self.image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # COLOR CONVERSION BGR 2 RGB
@@ -21,7 +22,7 @@ class FeatureExtraction:
         self.results = model.process(self.image)  # Make prediction
         self.image.flags.writeable = True  # Image is now writeable
         self.image = cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)  # COLOR CONVERSION RGB 2 BGR
-
+        return self.image, self.results
 
     def plot_landmarks(self):
         # Draw pose connections
@@ -52,20 +53,21 @@ class FeatureExtraction:
     def extract_coordinates(self, folder_name, no_frames):
         with self.holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
             try:
-                os.mkdir(os.path.join(os.getcwd(),'data_points'))
+                os.mkdir(os.path.join(os.getcwd(),'data_points_'+folder_name))
             except:
                 pass
-            path = os.path.join(os.getcwd(),'AUSLAN_'+folder_name+'videos')
+            path = os.path.join(os.getcwd(), 'AUSLAN_'+folder_name+'videos')
             for video in os.listdir(path):
                 file_name = video.split(".")
-                cap = cv2.VideoCapture(os.path.join(os.getcwd(),'AUSLAN_'+folder_name+'videos',video))
+                cap = cv2.VideoCapture(os.path.join(os.getcwd(), 'AUSLAN_'+folder_name+'videos', video))
                 for frames in range(no_frames):
                     ret, frame = cap.read()
                     if ret is True:
-                        self.mp_detect(frame, holistic)
-                        self.coordinates = self.get_coordinates()
-                        coord_path = os.path.join(os.getcwd(),'data_points',file_name[0])
-                        np.save(coord_path,self.coordinates)
+                        if not os.path.isfile(os.path.join(os.getcwd(),'data_points_'+folder_name, file_name[0]+'_'+str(frames)+'.npy')):
+                            self.mp_detect(frame, holistic)
+                            self.coordinates = self.get_coordinates()
+                            coord_path = os.path.join(os.getcwd(),'data_points_'+folder_name, file_name[0]+'_'+str(frames))
+                            np.save(coord_path,self.coordinates)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
             cap.release()
@@ -73,16 +75,18 @@ class FeatureExtraction:
 
     def concatenate_data_pts(self, folder_name, no_frames):
         iter_folder = os.listdir(os.path.join(os.getcwd(), 'Data', folder_name))
-        self.labels = os.listdir(os.path.join(os.getcwd(), 'Data', folder_name, iter_folder[0]))
-        label_mapping = {label:num for num, label in enumerate(self.labels)}
-
-        for dt_pts in os.listdir(os.path.join(os.getcwd(), 'data_points')):
-            single_videopts = []
-            for frames in range(no_frames):
-                res = np.load(os.path.join(os.getcwd(), 'data_points', dt_pts))
-                single_videopts.append(res)
-            self.sequence.append(single_videopts)
-            self.labels.append(label_mapping[self.labels])
+        self.className = os.listdir(os.path.join(os.getcwd(), 'Data', folder_name, iter_folder[0]))
+        label_mapping = {label: num for num, label in enumerate(self.className)}
+        for folder in iter_folder:
+            for objects in os.listdir(os.path.join(os.getcwd(), 'Data', folder_name, folder)):
+                for vid_samples in os.listdir(os.path.join(os.getcwd(), 'Data', folder_name, folder, objects)):
+                    single_videopts = []
+                    for frames in range(no_frames):
+                        res = np.load(os.path.join(os.getcwd(), 'data_points_'+folder_name, folder+objects+'-vid'+vid_samples+'_'+str(frames)+'.npy'))
+                        single_videopts.append(res)
+                    self.sequence.append(single_videopts)
+                    # print(objects)
+                    self.labels.append(label_mapping[objects])
         return self.sequence, self.labels
 
 

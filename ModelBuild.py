@@ -12,15 +12,15 @@ class ModelBuild:
         self.classes = classes
         self.epochs = no_epochs
         self.path = None
-        self.compiled_model = None
         self.history = None
+        self.compiled_model = None
 
     def constructModel(self):
-        inputs = te.keras.Input(shape=(None,None))
+        inputs = te.keras.Input(shape=(None, None))
         obj = te.PositionalEmbedding(self.sequence_length, self.embed_dim, name = "frame_position_embedding")(inputs)
         obj = te.TransformerEncoder(self.embed_dim, self.dense_dim, self.num_heads, name= "transformer_encode_layer")(obj)
         obj = te.layers.GlobalMaxPooling1D()(obj)
-        obj = te.layers.Dropout(0.5)(obj)
+        obj = te.layers.Dropout(0.8)(obj)
         outputs = te.layers.Dense(self.classes, activation="softmax")(obj)
         model = te.keras.Model(inputs, outputs)
 
@@ -30,13 +30,15 @@ class ModelBuild:
 
     def fitTransform(self, Xdata, Ydata):
         curr_dir = os.getcwd()
-        self.path = os.path.join(curr_dir,'model_transformer')
+        self.path = os.path.join(curr_dir,'word_weights.hdf5')
         checkpoint = te.keras.callbacks.ModelCheckpoint(self.path, save_weight_only=True, save_best_only=True, verbose=1)
-        compiled_model = self.constructModel()
-        self.history = compiled_model.fit(Xdata, Ydata, validation_split = 0.33, epochs=self.epochs, callbacks=[checkpoint])
+        self.compiled_model = self.constructModel()
+        self.history = self.compiled_model.fit(Xdata, Ydata, validation_split = 0.33, epochs=self.epochs,
+                                               callbacks=[checkpoint])
         return self.compiled_model
 
-    def TrainValPlot(self):
+
+    def stats(self, data, labels):
         plt.figure(figsize=(10, 10))
         plt.plot(self.history.history['loss'])
         plt.plot(self.history.history['val_loss'])
@@ -46,9 +48,11 @@ class ModelBuild:
         plt.legend(['train', 'validation'], loc='upper right')
         plt.show()
 
-    def modelAccuracy(self, data, labels):
-        self.compiled_model(self.path)
-        _,accuracy = self.compiled_model.evaluate(data, labels)
+        self.compiled_model.load_weights(self.path)
+        _, accuracy = self.compiled_model.evaluate(data, labels)
         print(f"Test accuracy: {round(accuracy * 100, 2)}%")
+
+
+
 
 

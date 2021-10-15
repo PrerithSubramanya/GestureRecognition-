@@ -3,7 +3,7 @@ import os
 import time
 
 class collectData:
-    def __init__(self,classType, folderName, numClasses):
+    def __init__(self,classType, numClasses=None, folderName=None):
         self.classType = classType
         self.folderName = folderName
         self.numClasses = numClasses
@@ -59,6 +59,7 @@ class collectData:
                             for frames in range(60):
                                 frames_path = os.path.join(os.getcwd(), 'Data', self.classType, folders, word, str(fol_num),
                                                            'frames' + str(frames) + '.jpg')
+                                # print(frames_path)
                                 img = cv2.imread(frames_path)
                                 height, width, layers = img.shape
                                 size = (width, height)

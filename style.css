@@ -1,0 +1,14 @@
+#MainMenu {
+  visibility: hidden;
+}
+footer {
+  visibility: hidden;
+}
+
+body {
+
+text-align: center;
+background-color: #4F8BF9;
+color: #fff;
+}
+
