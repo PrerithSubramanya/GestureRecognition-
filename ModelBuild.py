@@ -28,9 +28,9 @@ class ModelBuild:
         print(model.summary())
         return model
 
-    def fitTransform(self, Xdata, Ydata):
+    def fitTransform(self, classtype, Xdata, Ydata):
         curr_dir = os.getcwd()
-        self.path = os.path.join(curr_dir,'word_weights.hdf5')
+        self.path = os.path.join(curr_dir, classtype + self.dense_dim + '_' +self.num_heads + '_' +self.classes + '_' + self.epochs + 'weights.hdf5')
         checkpoint = te.keras.callbacks.ModelCheckpoint(self.path, save_weight_only=True, save_best_only=True, verbose=1)
         self.compiled_model = self.constructModel()
         self.history = self.compiled_model.fit(Xdata, Ydata, validation_split = 0.33, epochs=self.epochs,

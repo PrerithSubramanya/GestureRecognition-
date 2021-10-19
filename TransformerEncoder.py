@@ -68,11 +68,6 @@ class TransformerEncoder(layers.Layer):
         })
         return config
 
-    # def get_config(self):
-    #     return {"embed_dim": self.embed_dim,
-    #             "dense_dim": self.dense_dim,
-    #             "num_heads": self.num_heads}
-    #
     @classmethod
     def from_config(cls, config):
         return cls(**config)
