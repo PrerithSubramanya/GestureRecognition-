@@ -1,4 +1,4 @@
-from features.ModelBuild import ModelBuild
+from src.ModelBuild import ModelBuild
 import os
 
 EPOCHS = 100

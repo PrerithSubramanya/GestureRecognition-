@@ -11,8 +11,8 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.metrics import ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 from features.DataCreation import CollectData
-from features.FeatureExtract import FeatureExtraction
-from features.ModelBuild import ModelBuild
+from src.FeatureExtract import FeatureExtraction
+from src.ModelBuild import ModelBuild
 import mediapipe as mp
 import numpy as np
 import cv2

@@ -1,4 +1,4 @@
-from features.FeatureExtract import FeatureExtraction
+from src.FeatureExtract import FeatureExtraction
 from utils.modelreload import load_words_model, load_digits_model
 import streamlit as st
 import mediapipe as mp
