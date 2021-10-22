@@ -19,11 +19,11 @@ epochs = 100
 
 Word_model = ModelBuild(Num_frames, Num_features, word_ff_dense, word_multi_heads, words_class, epochs)
 w_model = Word_model.constructModel()
-w_model.load_weights(os.path.join(os.getcwd(), '../modelweights/word_weights.hdf5'))
+w_model.load_weights(os.path.join(os.getcwd(), 'word_weights.hdf5'))
 
 Num_model = ModelBuild(Num_frames, Num_features, num_ff_dense, num_multi_heads, num_class, epochs)
 n_model = Num_model.constructModel()
-n_model.load_weights(os.path.join(os.getcwd(), '../modelweights/num_weights.hdf5'))
+n_model.load_weights(os.path.join(os.getcwd(), 'num_weights.hdf5'))
 
 
 
@@ -150,7 +150,7 @@ def control_flow(stage, container, container1):
             time.sleep(20)
             stage =0
 
-local_css('../utils/style.css')
+local_css('style.css')
 remote_css('https://fonts.googleapis.com/icon?family=Material+Icons')
 
 st.title("Gesture recognition for cafe")
