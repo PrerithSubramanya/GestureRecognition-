@@ -41,6 +41,7 @@ def make_prediction(container, container1, actions, text, stage):
     sentence = []
     predictions = []
     threshold = 0.5
+    predictWord = ''
     feature = FeatureExtraction()
     camera = cv2.VideoCapture(0)
     with mp.solutions.holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
