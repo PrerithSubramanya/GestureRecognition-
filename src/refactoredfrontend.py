@@ -92,7 +92,7 @@ def make_prediction(container, container1, actions, text, stage):
                 break
 
         camera.release()
-        cv2.destroyAllWindows()
+        # cv2.destroyAllWindows()
         return stage, predictWord
 
 
