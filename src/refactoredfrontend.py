@@ -1,8 +1,8 @@
 import cv2
 import streamlit as st
 import mediapipe as mp
-import ModelBuild as Mb
-import FeatureExtract as Fe
+from features.ModelBuild import ModelBuild
+from features.FeatureExtract import FeatureExtraction
 import numpy as np
 import os
 import time
@@ -15,15 +15,15 @@ word_multi_heads = 3
 num_multi_heads = 2
 words_class = 16
 num_class = 10
-epochs = 50
+epochs = 100
 
-Word_model = Mb.ModelBuild(Num_frames, Num_features, word_ff_dense, word_multi_heads, words_class, epochs)
+Word_model = ModelBuild(Num_frames, Num_features, word_ff_dense, word_multi_heads, words_class, epochs)
 w_model = Word_model.constructModel()
-w_model.load_weights(os.path.join(os.getcwd(),'word_weights.hdf5'))
+w_model.load_weights(os.path.join(os.getcwd(), '../modelweights/word_weights.hdf5'))
 
-Num_model = Mb.ModelBuild(Num_frames, Num_features, num_ff_dense, num_multi_heads, num_class, epochs)
+Num_model = ModelBuild(Num_frames, Num_features, num_ff_dense, num_multi_heads, num_class, epochs)
 n_model = Num_model.constructModel()
-n_model.load_weights(os.path.join(os.getcwd(), 'num_weights.hdf5'))
+n_model.load_weights(os.path.join(os.getcwd(), '../modelweights/num_weights.hdf5'))
 
 
 
@@ -41,7 +41,7 @@ def make_prediction(container, container1, actions, text, stage):
     sentence = []
     predictions = []
     threshold = 0.5
-    feature = Fe.FeatureExtraction()
+    feature = FeatureExtraction()
     camera = cv2.VideoCapture(0)
     with mp.solutions.holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
         while camera.isOpened():
@@ -56,11 +56,11 @@ def make_prediction(container, container1, actions, text, stage):
             if len(sequence) == 60 and stage != 4:
                 res = w_model.predict(np.expand_dims(sequence, axis=0))[0]
                 predictWord = actions[np.argmax(res)]
-                # print(predictWord)
+                print(predictWord)
                 if stage == 0 and predictWord == 'Yes' or cv2.waitKey(1) & 0xFF == ord('q'):
                     stage += 1
                     break
-                elif stage == 2 or cv2.waitKey(1) & 0xFF == ord('q'):
+                elif stage == 2 or cv2.waitKey(1) & 0xFF == ord('q'): #prediction of items
                     if predictWord in ['Hot', 'Long', 'Flat', 'Short']:
                         predictions.append(np.argmax(res))
                         if np.unique(predictions[-10:])[0] == np.argmax(res):
@@ -79,10 +79,10 @@ def make_prediction(container, container1, actions, text, stage):
                             predictWord = "-".join(sentence)
                         stage += 1
                         break
-                elif stage == 3 and predictWord in ['Yes', 'No' ] or cv2.waitKey(1) & 0xFF == ord('q'):
+                elif stage == 3 and predictWord in ['Yes', 'No'] or cv2.waitKey(1) & 0xFF == ord('q'):
                     stage += 1
                     break
-                elif stage == 5 and predictWord in ['Yes', 'No' ] or cv2.waitKey(1) & 0xFF == ord('q'):
+                elif stage == 5 and predictWord in ['Yes', 'No'] or cv2.waitKey(1) & 0xFF == ord('q'):
                     stage +=1
                     break
             elif len(sequence) == 60 and stage == 4 or cv2.waitKey(1) & 0xFF == ord('q'):
@@ -100,7 +100,6 @@ def control_flow(stage, container, container1):
     words = ['Black', 'Cappuccino', 'Chocolate', 'Coffee', 'Flat', 'Hot', 'Large', 'Latte', 'Long', 'No',
              'Regular', 'Short', 'Small', 'White', 'Yes', 'None']
     numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'None']
-    print("method called again with the stage as: ", stage)
     if stage == 0:
         text = 'Would you like to begin?'
         stage, word = make_prediction(container, container1, words, text, stage)
@@ -132,7 +131,7 @@ def control_flow(stage, container, container1):
             stage, word = make_prediction(container, container1, numbers, text, stage)
             quantity = word
             container1.header('')
-            container.header(f'Did you want {word}x{ordered_item}')
+            container.header(f'Did you want {quantity} x {ordered_item}')
             for i in range(5, -1, -1):
                 container1.subheader(f'To confirm gesture YES or to change order gesture NO in {i}')
                 time.sleep(1)
@@ -147,11 +146,11 @@ def control_flow(stage, container, container1):
     if stage == 6:
         if word == 'Yes':
             container1.header('Thank you have a great day')
-            container.header(f'collect your order {quantity}x{ordered_item}')
+            container.header(f'collect your order {quantity} x {ordered_item}')
             time.sleep(20)
             stage =0
 
-local_css('style.css')
+local_css('../utils/style.css')
 remote_css('https://fonts.googleapis.com/icon?family=Material+Icons')
 
 st.title("Gesture recognition for cafe")

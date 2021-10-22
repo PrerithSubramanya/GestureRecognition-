@@ -1,10 +1,14 @@
-from tensorflow_docs.vis import embed
 from tensorflow.keras import layers
 from tensorflow import keras
 import tensorflow as tf
 
 
 class PositionalEmbedding(layers.Layer):
+    """
+    Defining positional embedding layers from keras.embedding
+    This is done as it is important to provide order of sequences
+    of the video frame
+    """
     def __init__(self, sequence_length, output_dim, **kwargs):
         super().__init__(**kwargs)
         self.position_embeddings = layers.Embedding(
@@ -14,8 +18,7 @@ class PositionalEmbedding(layers.Layer):
         self.output_dim = output_dim
 
     def call(self, inputs):
-        # The inputs are of shape: `(batch_size, frames, num_features)`
-        length = tf.shape(inputs)[1]
+        length = tf.shape(inputs)[1]  # The inputs are of shape: `(batch_size, frames, num_features)`
         positions = tf.range(start=0, limit=length, delta=1)
         embedded_positions = self.position_embeddings(positions)
         return inputs + embedded_positions
@@ -37,6 +40,11 @@ class PositionalEmbedding(layers.Layer):
 
 
 class TransformerEncoder(layers.Layer):
+    """
+    Defining encoder layer of the transformer, this layer
+    contains the attention module along with the feed forward dense
+    layers
+    """
     def __init__(self, embed_dim, dense_dim, num_heads, **kwargs):
         super().__init__(**kwargs)
         self.embed_dim = embed_dim
