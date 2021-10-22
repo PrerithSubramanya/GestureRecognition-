@@ -1,8 +1,8 @@
 import cv2
 import streamlit as st
 import mediapipe as mp
-from src.ModelBuild import ModelBuild
-from src.FeatureExtract import FeatureExtraction
+from ModelBuild import ModelBuild
+from FeatureExtract import FeatureExtraction
 import numpy as np
 import os
 import time
