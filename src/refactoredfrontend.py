@@ -150,8 +150,8 @@ def control_flow(stage, container, container1):
             time.sleep(20)
             stage =0
 
-local_css('../utils/style.css')
-remote_css('https://fonts.googleapis.com/icon?family=Material+Icons')
+# local_css('../utils/style.css')
+# remote_css('https://fonts.googleapis.com/icon?family=Material+Icons')
 
 st.title("Gesture recognition for cafe")
 stage = 0
