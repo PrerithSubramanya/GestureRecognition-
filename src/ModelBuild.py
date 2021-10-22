@@ -1,4 +1,4 @@
-from src.Transformers import PositionalEmbedding, TransformerEncoder
+from Transformers import PositionalEmbedding, TransformerEncoder
 from tensorflow.keras import layers
 from tensorflow import keras
 import os
