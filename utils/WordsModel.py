@@ -7,18 +7,16 @@
 #importing necessary dependencies
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
-from features.DataCreation import CollectData
-from src.FeatureExtract import FeatureExtraction
+from features.datacreation import CollectData
+from features.dataextraction import DataExtraction
 from src.ModelBuild import ModelBuild
 import mediapipe as mp
 import numpy as np
 import cv2
 import os
-import imageio
-
 
 # In[2]:
 
@@ -29,25 +27,25 @@ Data = CollectData('Words', None, None)
 # In[3]:
 
 
-Data.frameVideo() # convert frames to videos to for a video dataset
+Data.frametovideo() # convert frames to videos to for a video dataset
 
 
 # In[2]:
 
 
-extract_data = FeatureExtraction()
+extract_data = DataExtraction('Words', 60)
 
 
 # In[3]:
 
 
-extract_data.extract_coordinates('Words', 60) # extract features for the dataset
+extract_data.extract_coordinates() # extract features for the dataset
 
 
 # In[4]:
 
 
-landmark, classes = extract_data.concatenate_data_pts('Words', 60) #concatenate the feature extracted in batch size of 60 and label them accordingly
+landmark, classes = extract_data.concatenate_data_pts() #concatenate the feature extracted in batch size of 60 and label them accordingly
 
 
 # In[5]:
@@ -62,8 +60,8 @@ np.save(os.path.join(os.getcwd(), 'WordLandmarks'), landmark)
 
 
 #load the saved dataset
-X = np.load(os.path.join('cnn featuremaps','WordLandmarks.npy'))
-Y = np.load(os.path.join('cnn featuremaps', 'WordClasses.npy'))
+X = np.load('WordLandmarks.npy')
+Y = np.load('WordClasses.npy')
 Y = to_categorical(Y).astype(int)
 
 
@@ -72,7 +70,7 @@ Y = to_categorical(Y).astype(int)
 
 #split the data into train and test
 print(X.shape)
-XTrain, XTest, YTrain, YTest = train_test_split(X, Y, test_size=0.1)
+XTrain, XTest, YTrain, YTest = train_test_split(X, Y, test_size=0.025)
 print(XTrain.shape, YTrain.shape)
 
 
@@ -167,14 +165,6 @@ def vidfeatureextract(random_test):
     sequence = sequence[-60:]
     return sequence
 
-# #Convert the videos to gif for visualisation purpose only
-# def to_gif(images):
-#     reader = imageio.get_reader(os.path.join(os.getcwd(),'test', random_test))
-#     images =[]
-#     for frames in reader:
-#         images.append(frames)
-#     imageio.mimsave("animation.gif", images, fps=15)
-#     return embed.embed_file("animation.gif")
 
 #Predict the confidence percentage along with the perdicted class
 def predictPercentage(random_test):

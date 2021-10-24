@@ -7,10 +7,10 @@ class CollectData:
     """
     Helps collection of data and conversion of data frames into video.
     """
-    def __init__(self, classType, numClasses=None, folderName=None):
+    def __init__(self, classType, num_classes=None, folder_name=None):
         self.classType = classType
-        self.folderName = folderName
-        self.numClasses = numClasses
+        self.folder_name = folder_name
+        self.num_classes = num_classes
 
     def captureFrames(self, numframes):
         """
@@ -24,18 +24,18 @@ class CollectData:
         """
 
         save_path = os.getcwd()
-        for _ in range(self.numClasses):
+        for _ in range(self.num_classes):
             class_name = input("Enter the class name: ")
             for counter in range(1,31):
                 try:
-                    os.chdir(os.path.join(save_path, '../capturedframes', self.classType, self.folderName, class_name, str(counter)))
+                    os.chdir(os.path.join(save_path, '../capturedframes', self.classType, self.folder_name, class_name, str(counter)))
                 except FileNotFoundError:
-                    os.makedirs(os.path.join(save_path, '../capturedframes', self.classType, self.folderName, class_name,
+                    os.makedirs(os.path.join(save_path, '../capturedframes', self.classType, self.folder_name, class_name,
                                              str(counter)))
                     cap = cv2.VideoCapture(0)
                     for frame_num in range(numframes):
                         ret, frame = cap.read()
-                        jpg_path = os.path.join(save_path, '../capturedframes', self.classType, self.folderName, class_name,
+                        jpg_path = os.path.join(save_path, '../capturedframes', self.classType, self.folder_name, class_name,
                                                 str(counter), 'frames' + str(frame_num - 2) + '.jpg')
                         if ret is True:
                             if frame_num == 0:

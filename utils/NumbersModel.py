@@ -8,18 +8,16 @@
 # from imports import *
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
-from features.DataCreation import CollectData
-from src.FeatureExtract import FeatureExtraction
+from features.datacreation import CollectData
+from features.dataextraction import DataExtraction
 from src.ModelBuild import ModelBuild
 import numpy as np
 import cv2
 import os
 import mediapipe as mp
-import imageio
-
 
 # In[6]:
 
@@ -30,25 +28,25 @@ Data = CollectData('Numbers', None, None)
 # In[24]:
 
 
-Data.frameVideo() # convert frames to videos to for a video dataset
+Data.frametovideo() # convert frames to videos to for a video dataset
 
 
 # In[3]:
 
 
-extract_data = FeatureExtraction()
+extract_data = DataExtraction('Numbers', 60)
 
 
 # In[ ]:
 
 
-extract_data.extract_coordinates('Numbers', 60) # extract features for the dataset
+extract_data.extract_coordinates() # extract features for the dataset
 
 
 # In[4]:
 
 
-landmark, classes = extract_data.concatenate_data_pts('Numbers', 60) #concatenate the feature extracted in batch size of 60 and label them accordingly
+landmark, classes = extract_data.concatenate_data_pts() #concatenate the feature extracted in batch size of 60 and label them accordingly
 
 
 # In[7]:
@@ -168,19 +166,10 @@ def prepare_testVid(random_test):
     sequence = sequence[-60:]
     return sequence
 
-# #Convert the videos to gif for visualisation purpose only
-# def to_gif(images):
-#     reader = imageio.get_reader(os.path.join(os.getcwd(),'nums_vids', random_test))
-#     images =[]
-#     for frames in reader:
-#         images.append(frames)
-#     imageio.mimsave("animation.gif", images, fps=15)
-#     return embed.embed_file("animation.gif")
 
 #Predict the confidence percentage along with the perdicted class
 def predictPercentage(random_test):
     res = model.predict(np.expand_dims(prepare_testVid(random_test), axis=0))[0]
-#     print(actions[np.argsort(res)][0], ' : ', res[0], 'Actual video : ', random_test)
     counter = 0
     for i in np.argsort(res)[::-1]:
         if counter == 0:
