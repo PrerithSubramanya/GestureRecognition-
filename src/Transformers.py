@@ -8,6 +8,10 @@ class PositionalEmbedding(layers.Layer):
     Defining positional embedding layers from keras.embedding
     This is done as it is important to provide order of sequences
     of the video frame
+
+        this code is based from https://github.com/keras-team/keras-io/blob/master/examples/nlp/neural_machine_translation_with_transformer.py
+
+
     """
     def __init__(self, sequence_length, output_dim, **kwargs):
         super().__init__(**kwargs)
@@ -44,6 +48,9 @@ class TransformerEncoder(layers.Layer):
     Defining encoder layer of the transformer, this layer
     contains the attention module along with the feed forward dense
     layers
+
+    this code is based from https://github.com/keras-team/keras-io/blob/master/examples/nlp/neural_machine_translation_with_transformer.py
+
     """
     def __init__(self, embed_dim, dense_dim, num_heads, **kwargs):
         super().__init__(**kwargs)
