@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[6]:
-
-
 #importing necessary dependencies
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
@@ -26,6 +20,7 @@ Data = CollectData('Words', None, None)
 
 # In[3]:
 
+Data.captureFrames(60)
 
 Data.frametovideo() # convert frames to videos to for a video dataset
 

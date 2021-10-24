@@ -1,11 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[3]:
-
-
 #importing necessary dependencies
-# from imports import *
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 from sklearn.metrics import confusion_matrix
@@ -27,6 +20,7 @@ Data = CollectData('Numbers', None, None)
 
 # In[24]:
 
+Data.captureFrames(60)
 
 Data.frametovideo() # convert frames to videos to for a video dataset
 

@@ -13,15 +13,37 @@ Num_model = load_digits_model()
 
 
 def local_css(file_name):
+    """
+    Loads a local css file to override streamlit's builtin css
+    :param file_name: css file
+    :return: None
+    """
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 
 def remote_css(url):
+    """
+    Loads a remote css api to override the streamlit's font
+    :param url: input url
+    :return: None
+    """
     st.markdown(f'<link href="{url}" rel="stylesheet">', unsafe_allow_html=True)
 
 
 def make_prediction(container, container1, actions, text, stage):
+    """
+    This function predicts gesture or action performed by extracting the
+    cnn feature map with the help of mediapipe combined with transformer
+    model classification.
+
+    :param container: placeholder for video frame or text
+    :param container1: placeholder for text
+    :param actions: gesture labels
+    :param text: Texts to instruct the user to navigate the UI
+    :param stage: flow of the system
+    :return: predicted action (str)
+    """
     sequence = []
     sentence = []
     predictions = []
@@ -42,7 +64,6 @@ def make_prediction(container, container1, actions, text, stage):
             if len(sequence) == 60 and stage != 4:
                 res = Word_model.predict(np.expand_dims(sequence, axis=0))[0]
                 predictWord = actions[np.argmax(res)]
-                print(predictWord)
                 if stage == 0 and predictWord == 'Yes' or cv2.waitKey(1) & 0xFF == ord('q'):
                     stage += 1
                     break
@@ -85,6 +106,14 @@ def make_prediction(container, container1, actions, text, stage):
 
 
 def control_flow(stage, container, container1):
+    """
+    this helps render components inside a container, thus creating
+    effect to of flow navigation.
+    :param stage:  flow connectors of the system
+    :param container: placeholder for video frame or text
+    :param container1: placeholder for text
+    :return: None
+    """
     words = ['Black', 'Cappuccino', 'Chocolate', 'Coffee', 'Flat', 'Hot', 'Large', 'Latte', 'Long', 'No',
              'Regular', 'Short', 'Small', 'White', 'Yes', 'None']
     numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'None']
